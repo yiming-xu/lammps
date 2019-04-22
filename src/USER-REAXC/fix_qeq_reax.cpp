@@ -68,7 +68,7 @@ FixQEqReax::FixQEqReax(LAMMPS *lmp, int narg, char **arg) :
 {
   if (lmp->citeme) lmp->citeme->add(cite_fix_qeq_reax);
 
-  if (narg<8 || narg>9) error->all(FLERR,"Illegal fix qeq/reax command");
+  if (narg<8 || narg>13) error->all(FLERR,"Illegal fix qeq/reax command");
 
   nevery = force->inumeric(FLERR,arg[3]);
   if (nevery <= 0) error->all(FLERR,"Illegal fix qeq/reax command");
@@ -91,12 +91,10 @@ FixQEqReax::FixQEqReax(LAMMPS *lmp, int narg, char **arg) :
   // check for electric field
   // implementation detail in dx.doi.org/10.1021/jp306932a
   // J. Phys. Chem. A 2012, 116, 11796−11805
-  efield_x = 0;
-  efield_y = 0;
-  efield_z = 0;
+  
   efield_enabled = 0;
   if (narg > 9) {
-    efield_start = 8;
+    int efield_start = 8;
     efield_enabled = 1;
     if (dual_enabled == 1) efield_start++;
 
@@ -496,7 +494,6 @@ void FixQEqReax::init_storage()
 
   for (int i = 0; i < NN; i++) {
     Hdia_inv[i] = 1. / eta[atom->type[i]];
-    chi = 
     b_s[i] = -chi[atom->type[i]];
     b_t[i] = -1.0;
     b_prc[i] = 0;
@@ -561,7 +558,7 @@ void FixQEqReax::init_matvec()
 
   int nn, ii, i;
   int *ilist;
-
+  double chi;
   if (reaxc) {
     nn = reaxc->list->inum;
     ilist = reaxc->list->ilist;
@@ -576,12 +573,11 @@ void FixQEqReax::init_matvec()
 
       /* init pre-conditioner for H and init solution vectors */
       Hdia_inv[i] = 1. / eta[ atom->type[i] ];
-      chi = chi[ atom->type[i] ];
       if (efield_enabled == 1){
         double **x = atom->x;
-        chi = chi - (x[0] * efield_x + x[1] * efield_y + x[2] * efield_z) * 1.6022e-19
+        b_s[i] = -(chi[ atom->type[i] ] - (x[i][0] * efield_x + x[i][1] * efield_y + x[i][2] * efield_z) * 1.6022e-19);
       }
-      b_s[i]      = -chi;
+      else b_s[i] = -chi[ atom->type[i] ];
       
       b_t[i]      = -1.0;
 

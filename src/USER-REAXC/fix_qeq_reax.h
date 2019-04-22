@@ -142,6 +142,10 @@ class FixQEqReax : public Fix {
   // dual CG support
   int dual_enabled;  // 0: Original, separate s & t optimization; 1: dual optimization
   int matvecs_s, matvecs_t; // Iteration count for each system
+
+  // electric field support;
+  double efield_x, efield_y, efield_z;
+  int efield_enabled;
 };
 
 }
