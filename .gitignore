@@ -35,6 +35,7 @@ vgcore.*
 ehthumbs.db
 Thumbs.db
 .clang-format
+*.ipch
 
 #cmake
 /build*
@@ -43,3 +44,4 @@ Thumbs.db
 /Makefile
 /cmake_install.cmake
 /lmp
+
