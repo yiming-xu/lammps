@@ -87,6 +87,27 @@ FixQEqReax::FixQEqReax(LAMMPS *lmp, int narg, char **arg) :
     if (strcmp(arg[8],"dual") == 0) dual_enabled = 1;
     else error->all(FLERR,"Illegal fix qeq/reax command");
   }
+
+  // check for electric field
+  // implementation detail in dx.doi.org/10.1021/jp306932a
+  // J. Phys. Chem. A 2012, 116, 11796−11805
+  efield_x = 0;
+  efield_y = 0;
+  efield_z = 0;
+  efield_enabled = 0;
+  if (narg > 9) {
+    efield_start = 8;
+    efield_enabled = 1;
+    if (dual_enabled == 1) efield_start++;
+
+    if (strcmp(arg[efield_start],"efield") == 0){
+      efield_x = force->numeric(FLERR,arg[efield_start+1]);
+      efield_y = force->numeric(FLERR,arg[efield_start+2]);
+      efield_z = force->numeric(FLERR,arg[efield_start+3]);
+    }
+    else error->all(FLERR,"Illegal fix qeq/reax command");
+  }
+
   shld = NULL;
 
   n = n_cap = 0;
@@ -475,6 +496,7 @@ void FixQEqReax::init_storage()
 
   for (int i = 0; i < NN; i++) {
     Hdia_inv[i] = 1. / eta[atom->type[i]];
+    chi = 
     b_s[i] = -chi[atom->type[i]];
     b_t[i] = -1.0;
     b_prc[i] = 0;
@@ -554,7 +576,13 @@ void FixQEqReax::init_matvec()
 
       /* init pre-conditioner for H and init solution vectors */
       Hdia_inv[i] = 1. / eta[ atom->type[i] ];
-      b_s[i]      = -chi[ atom->type[i] ];
+      chi = chi[ atom->type[i] ];
+      if (efield_enabled == 1){
+        double **x = atom->x;
+        chi = chi - (x[0] * efield_x + x[1] * efield_y + x[2] * efield_z) * 1.6022e-19
+      }
+      b_s[i]      = -chi;
+      
       b_t[i]      = -1.0;
 
       /* linear extrapolation for s & t from previous solutions */
