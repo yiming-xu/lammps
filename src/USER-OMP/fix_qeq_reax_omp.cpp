@@ -395,7 +395,7 @@ void FixQEqReaxOMP::init_matvec()
         Hdia_inv[i] = 1. / eta[ atom->type[i] ];
         if (efield_enabled){
           double **x = atom->x;
-          b_s[i] = -(chi[ atom->type[i] ] - (x[i][0] * efield_x + x[i][1] * efield_y + x[i][2] * efield_z) * 1.6022e-19);
+          b_s[i] = -(chi[ atom->type[i] ] + (x[i][0] * efield_x + x[i][1] * efield_y + x[i][2] * efield_z));
         }
         else b_s[i] = -chi[ atom->type[i] ];
         b_t[i]      = -1.0;
@@ -427,7 +427,7 @@ void FixQEqReaxOMP::init_matvec()
         Hdia_inv[i] = 1. / eta[ atom->type[i] ];
         if (efield_enabled){
           double **x = atom->x;
-          b_s[i] = -(chi[ atom->type[i] ] - (x[i][0] * efield_x + x[i][1] * efield_y + x[i][2] * efield_z) * 1.6022e-19);
+          b_s[i] = -(chi[ atom->type[i] ] + (x[i][0] * efield_x + x[i][1] * efield_y + x[i][2] * efield_z));
         }
         else b_s[i] = -chi[ atom->type[i] ];
         b_t[i]      = -1.0;
