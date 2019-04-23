@@ -83,7 +83,7 @@ FixQEqReax::FixQEqReax(LAMMPS *lmp, int narg, char **arg) :
   // dual CG support only available for USER-OMP variant
   // check for compatibility is in Fix::post_constructor()
   dual_enabled = 0;
-  if (narg == 9) {
+  if (narg == 9 || narg == 13) {
     if (strcmp(arg[8],"dual") == 0) dual_enabled = 1;
     else error->all(FLERR,"Illegal fix qeq/reax command");
   }
@@ -94,14 +94,11 @@ FixQEqReax::FixQEqReax(LAMMPS *lmp, int narg, char **arg) :
   
   efield_enabled = 0;
   if (narg > 9) {
-    int efield_start = 8;
     efield_enabled = 1;
-    if (dual_enabled == 1) efield_start++;
-
-    if (strcmp(arg[efield_start],"efield") == 0){
-      efield_x = force->numeric(FLERR,arg[efield_start+1]);
-      efield_y = force->numeric(FLERR,arg[efield_start+2]);
-      efield_z = force->numeric(FLERR,arg[efield_start+3]);
+    if (strcmp(arg[8 + dual_enabled],"efield") == 0){
+      efield_x = force->numeric(FLERR,arg[9 + dual_enabled]);
+      efield_y = force->numeric(FLERR,arg[10 + dual_enabled]);
+      efield_z = force->numeric(FLERR,arg[11 + dual_enabled]);
     }
     else error->all(FLERR,"Illegal fix qeq/reax command");
   }
@@ -558,7 +555,7 @@ void FixQEqReax::init_matvec()
 
   int nn, ii, i;
   int *ilist;
-  double chi;
+
   if (reaxc) {
     nn = reaxc->list->inum;
     ilist = reaxc->list->ilist;
@@ -573,7 +570,7 @@ void FixQEqReax::init_matvec()
 
       /* init pre-conditioner for H and init solution vectors */
       Hdia_inv[i] = 1. / eta[ atom->type[i] ];
-      if (efield_enabled == 1){
+      if (efield_enabled){
         double **x = atom->x;
         b_s[i] = -(chi[ atom->type[i] ] - (x[i][0] * efield_x + x[i][1] * efield_y + x[i][2] * efield_z) * 1.6022e-19);
       }
