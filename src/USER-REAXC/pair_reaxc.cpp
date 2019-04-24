@@ -251,7 +251,7 @@ void PairReaxC::settings(int narg, char **arg)
       else if (strcmp(arg[iarg+1],"no") == 0) control->enobondsflag = 0;
       else error->all(FLERR,"Illegal pair_style reax/c command");
       iarg += 2;
-  } else if (strcmp(arg[iarg],"lgvdw") == 0) {
+    } else if (strcmp(arg[iarg],"lgvdw") == 0) {
       if (iarg+2 > narg) error->all(FLERR,"Illegal pair_style reax/c command");
       if (strcmp(arg[iarg+1],"yes") == 0) control->lgflag = 1;
       else if (strcmp(arg[iarg+1],"no") == 0) control->lgflag = 0;
@@ -270,6 +270,13 @@ void PairReaxC::settings(int narg, char **arg)
       if (system->mincap < 0)
         error->all(FLERR,"Illegal pair_style reax/c mincap command");
       iarg += 2;
+    } else if (strcmp(arg[iarg],"efield") == 0) {
+      if (iarg+4 > narg) error->all(FLERR,"Illegal pair_style reax/c command");
+      system->efield_enabled = 1;
+      system->efield_x = force->numeric(FLERR,arg[iarg+1]);
+      system->efield_y = force->numeric(FLERR,arg[iarg+2]);
+      system->efield_z = force->numeric(FLERR,arg[iarg+3]);
+      iarg += 4;
     } else error->all(FLERR,"Illegal pair_style reax/c command");
   }
 

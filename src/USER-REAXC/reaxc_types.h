@@ -415,6 +415,9 @@ struct _reax_system
   int my_bonds;
   int mincap;
   double safezone, saferzone;
+  // electric field support;
+  double efield_x, efield_y, efield_z;
+  int efield_enabled = 0;
 
   int omp_active;
 };
