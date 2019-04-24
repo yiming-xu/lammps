@@ -233,7 +233,8 @@ void PairReaxC::settings(int narg, char **arg)
   system->mincap = MIN_CAP;
   system->safezone = SAFE_ZONE;
   system->saferzone = SAFER_ZONE;
-
+  system->efield_enabled = 0;
+  
   // process optional keywords
 
   int iarg = 1;
