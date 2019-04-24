@@ -35,7 +35,11 @@ vgcore.*
 ehthumbs.db
 Thumbs.db
 .clang-format
+
+#vscode
 *.ipch
+*.vscode
+
 
 #cmake
 /build*
