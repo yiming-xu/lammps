@@ -320,13 +320,14 @@ void Compute_Polarization_Energy( reax_system *system, simulation_data *data )
 {
   int  i, type_i;
   double q, en_tmp;
+  double *x;
 
   data->my_en.e_pol = 0.0;
   for( i = 0; i < system->n; i++ ) {
     type_i = system->my_atoms[i].type;
     if (type_i < 0) continue;
     q = system->my_atoms[i].q;
-    x = system->my_atoms[i].x
+    x = system->my_atoms[i].x;
     en_tmp = KCALpMOL_to_EV * (system->reax_param.sbp[type_i].chi * q +
                 (system->reax_param.sbp[type_i].eta / 2.) * SQR(q));
     if (system->efield_enabled){
