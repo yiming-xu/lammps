@@ -68,7 +68,7 @@ FixQEqReax::FixQEqReax(LAMMPS *lmp, int narg, char **arg) :
 {
   if (lmp->citeme) lmp->citeme->add(cite_fix_qeq_reax);
 
-  if (narg<8 || narg>13) error->all(FLERR,"Illegal fix qeq/reax command");
+  if (narg<8 || narg>9) error->all(FLERR,"Illegal fix qeq/reax command");
 
   nevery = force->inumeric(FLERR,arg[3]);
   if (nevery <= 0) error->all(FLERR,"Illegal fix qeq/reax command");
@@ -83,23 +83,8 @@ FixQEqReax::FixQEqReax(LAMMPS *lmp, int narg, char **arg) :
   // dual CG support only available for USER-OMP variant
   // check for compatibility is in Fix::post_constructor()
   dual_enabled = 0;
-  if (narg == 9 || narg == 13) {
+  if (narg == 9) {
     if (strcmp(arg[8],"dual") == 0) dual_enabled = 1;
-    else error->all(FLERR,"Illegal fix qeq/reax command");
-  }
-
-  // check for electric field
-  // implementation detail in dx.doi.org/10.1021/jp306932a
-  // J. Phys. Chem. A 2012, 116, 11796−11805
-  
-  efield_enabled = 0;
-  if (narg > 9) {
-    efield_enabled = 1;
-    if (strcmp(arg[8 + dual_enabled],"efield") == 0){
-      efield_x = force->numeric(FLERR,arg[9 + dual_enabled]);
-      efield_y = force->numeric(FLERR,arg[10 + dual_enabled]);
-      efield_z = force->numeric(FLERR,arg[11 + dual_enabled]);
-    }
     else error->all(FLERR,"Illegal fix qeq/reax command");
   }
 
@@ -492,6 +477,10 @@ void FixQEqReax::init_storage()
   for (int i = 0; i < NN; i++) {
     Hdia_inv[i] = 1. / eta[atom->type[i]];
     b_s[i] = -chi[atom->type[i]];
+    if (efield_enabled){
+      double **x = atom->x;
+      b_s[i] += x[i][0] * efield_x + x[i][1] * efield_y + x[i][2] * efield_z;
+    } 
     b_t[i] = -1.0;
     b_prc[i] = 0;
     b_prm[i] = 0;
