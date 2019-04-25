@@ -266,9 +266,11 @@ void FixQEqReaxOMP::init_storage()
   for (int i = 0; i < NN; i++) {
     Hdia_inv[i] = 1. / eta[atom->type[i]];
     b_s[i] = -chi[atom->type[i]];
-    if (efield_enabled){
+    if (reaxc->system->efield_enabled){
       double **x = atom->x;
-      b_s[i] += x[i][0] * efield_x + x[i][1] * efield_y + x[i][2] * efield_z;
+      b_s[i] += x[i][0] * reaxc->system->efield_x +
+                x[i][1] * reaxc->system->efield_y +
+                x[i][2] * reaxc->system->efield_z;
     } 
     b_t[i] = -1.0;
     b_prc[i] = 0;
@@ -398,9 +400,11 @@ void FixQEqReaxOMP::init_matvec()
         /* init pre-conditioner for H and init solution vectors */
         Hdia_inv[i] = 1. / eta[ atom->type[i] ];
         b_s[i] = -chi[ atom->type[i] ];
-        if (efield_enabled){
+        if (reaxc->system->efield_enabled){
           double **x = atom->x;
-          b_s[i] += x[i][0] * efield_x + x[i][1] * efield_y + x[i][2] * efield_z;
+          b_s[i] += x[i][0] * reaxc->system->efield_x +
+                    x[i][1] * reaxc->system->efield_y +
+                    x[i][2] * reaxc->system->efield_z;
         }   
         b_t[i]      = -1.0;
 
@@ -430,9 +434,11 @@ void FixQEqReaxOMP::init_matvec()
         /* init pre-conditioner for H and init solution vectors */
         Hdia_inv[i] = 1. / eta[ atom->type[i] ];
         b_s[i] = -chi[ atom->type[i] ];
-        if (efield_enabled){
+        if (reaxc->system->efield_enabled){
           double **x = atom->x;
-          b_s[i] += x[i][0] * efield_x + x[i][1] * efield_y + x[i][2] * efield_z;
+          b_s[i] += x[i][0] * reaxc->system->efield_x +
+                    x[i][1] * reaxc->system->efield_y +
+                    x[i][2] * reaxc->system->efield_z;
         } 
         b_t[i]      = -1.0;
 
