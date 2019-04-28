@@ -277,7 +277,14 @@ void PairReaxC::settings(int narg, char **arg)
       system->efield_x = force->numeric(FLERR,arg[iarg+1]);
       system->efield_y = force->numeric(FLERR,arg[iarg+2]);
       system->efield_z = force->numeric(FLERR,arg[iarg+3]);
-      iarg += 4;
+      system->efield_xlo = force->numeric(FLERR,arg[iarg+4]);
+      system->efield_xhi = force->numeric(FLERR,arg[iarg+5]);
+      system->efield_ylo = force->numeric(FLERR,arg[iarg+6]);
+      system->efield_yhi = force->numeric(FLERR,arg[iarg+7]);
+      system->efield_zlo = force->numeric(FLERR,arg[iarg+8]);
+      system->efield_zhi = force->numeric(FLERR,arg[iarg+9]);
+
+      iarg += 10;
     } else error->all(FLERR,"Illegal pair_style reax/c command");
   }
 

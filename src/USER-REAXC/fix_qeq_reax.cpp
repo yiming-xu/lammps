@@ -479,10 +479,16 @@ void FixQEqReax::init_storage()
     b_s[i] = -chi[atom->type[i]];
     if (reaxc->system->efield_enabled){
       double **x = atom->x;
-      b_s[i] += x[i][0] * reaxc->system->efield_x +
-                x[i][1] * reaxc->system->efield_y +
-                x[i][2] * reaxc->system->efield_z;
-    } 
+      /* DIY region matching for now*/
+      if (x[i][0] > reaxc->system->efield_xlo && x[i][0] < reaxc->system->efield_xhi &&
+          x[i][1] > reaxc->system->efield_ylo && x[i][1] < reaxc->system->efield_yhi &&
+          x[i][2] > reaxc->system->efield_zlo && x[i][2] < reaxc->system->efield_zhi) {
+
+        b_s[i] += x[i][0] * reaxc->system->efield_x +
+                  x[i][1] * reaxc->system->efield_y +
+                  x[i][2] * reaxc->system->efield_z;
+      }
+    }
     b_t[i] = -1.0;
     b_prc[i] = 0;
     b_prm[i] = 0;
@@ -564,10 +570,16 @@ void FixQEqReax::init_matvec()
       b_s[i] = -chi[ atom->type[i] ];
       if (reaxc->system->efield_enabled){
         double **x = atom->x;
-        b_s[i] += x[i][0] * reaxc->system->efield_x +
-                  x[i][1] * reaxc->system->efield_y +
-                  x[i][2] * reaxc->system->efield_z;
-      }      
+        /* DIY region matching for now*/
+        if (x[i][0] > reaxc->system->efield_xlo && x[i][0] < reaxc->system->efield_xhi &&
+            x[i][1] > reaxc->system->efield_ylo && x[i][1] < reaxc->system->efield_yhi &&
+            x[i][2] > reaxc->system->efield_zlo && x[i][2] < reaxc->system->efield_zhi) {
+
+          b_s[i] += x[i][0] * reaxc->system->efield_x +
+                    x[i][1] * reaxc->system->efield_y +
+                    x[i][2] * reaxc->system->efield_z;
+        }
+      }
       b_t[i]      = -1.0;
 
       /* linear extrapolation for s & t from previous solutions */

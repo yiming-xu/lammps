@@ -417,6 +417,7 @@ struct _reax_system
   double safezone, saferzone;
   // electric field support;
   double efield_x, efield_y, efield_z;
+  double efield_xlo, efield_xhi, efield_ylo, efield_yhi, efield_zlo, efield_zhi;
   int efield_enabled;
 
   int omp_active;
